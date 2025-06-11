@@ -1,0 +1,103 @@
+{% extends "forecasting_app/base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8">
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
+        <h1 class="text-3xl font-bold mb-4">Forecast Results - {{ data_type|title }}</h1>
+        
+        <!-- Summary Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {% for key, value in summary_stats.items %}
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold text-gray-600">{{ key }}</h3>
+                <p class="text-2xl font-bold">{{ value }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Forecast Plot -->
+        {% if plot_div %}
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Forecast Visualization</h2>
+            {{ plot_div|safe }}
+        </div>
+        {% endif %}
+
+        <!-- Model Performance -->
+        {% if metrics %}
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Model Performance</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">MAE</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">RMSE</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">R2</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for name in model_names %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ metrics|get_item:name|get_item:'MAE'|floatformat:4 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ metrics|get_item:name|get_item:'RMSE'|floatformat:4 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ metrics|get_item:name|get_item:'R2'|floatformat:4 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Forecast Values -->
+        {% if forecast_table %}
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Forecast Values</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            {% for col in column_names %}
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for row in forecast_table %}
+                        <tr>
+                            {% for col in column_names %}
+                            <td class="px-6 py-4 whitespace-nowrap">{{ row|get_item:col }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="flex space-x-4">
+            <a href="{% url 'forecasting_app:index' %}" 
+               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                New Forecast
+            </a>
+            <button onclick="window.print()" 
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Print Results
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add any JavaScript functionality here
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle any interactive features
+});
+</script>
+{% endblock %}

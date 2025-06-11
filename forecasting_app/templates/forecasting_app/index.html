@@ -1,0 +1,47 @@
+{% extends "forecasting_app/base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Time Series Forecasting</h1>
+    
+    <div class="bg-white shadow rounded-lg p-6">
+        <form method="post" action="{% url 'forecasting_app:forecast' %}">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    {{ form.data_type.label }}
+                </label>
+                {{ form.data_type }}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    {{ form.model_type.label }}
+                </label>
+                {{ form.model_type }}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    {{ form.forecast_periods.label }}
+                </label>
+                {{ form.forecast_periods }}
+            </div>
+            
+            <!-- <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    {{ form.confidence_interval.label }}
+                </label>
+                {{ form.confidence_interval }}
+            </div> -->
+            
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Generate Forecast
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
